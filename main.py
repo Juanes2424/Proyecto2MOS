@@ -109,12 +109,24 @@ def modelo(CD, C, P, V, D, Q, G, A, M, F1, F2, F3):
     model.x = Var(V, P, P, within=Binary)
     model.y = Var(V, within=Binary)
     model.z = Var(V, CD, within=Binary)
+    model.u = Var(P, V, within=NonNegativeIntegers, bounds=(0, len(C)))
+    # n nodos, k vehiculos
 
     model.objetivo = Objective(
         expr=(F1 + F2 + F3)
         * sum(M[m, n] * model.x[k, m, n] for k in V for m in P for n in P if m != n),
         sense=minimize,
     )
+
+    model.subTour1 = ConstraintList()
+    for i in C:
+        for j in C:
+            for k in V:
+                if i != j:
+                    model.subTour1.add(
+                        expr=model.u[i, k] - model.u[j, k] + len(P) * model.x[k, i, j]
+                        <= len(P) - 1
+                    )
 
     model.inicio_CD = ConstraintList()
     for k in V:
@@ -254,8 +266,10 @@ def mostrar_mapa_google_maps(coord_df, CD, V, P, vehicle_paths, api_key):
         "#FF69B4",
     ]
 
+    cou = 0
     for idx, (k, path) in enumerate(vehicle_paths.items()):
-        color = color_list[idx % len(color_list)]
+        color = color_list[cou]
+        cou += 1
         for step_idx, (i, j) in enumerate(path):
             html += f"""
             var directionsRenderer_{i}_{j} = new google.maps.DirectionsRenderer({{
@@ -315,7 +329,9 @@ CD, C, P, V, D, Q, G, A, M, F1, F2, F3, coord_df = definirCasoPrueba(usar_csv)
 
 Model = modelo(CD, C, P, V, D, Q, G, A, M, F1, F2, F3)
 
-SolverFactory("glpk").solve(Model)
+solver = SolverFactory("glpk")
+solver.options = {"tmlim": 60, "mipgap": 0.0001}
+solver.solve(Model, tee=True)
 
 vehicle_paths = imprimir_rutas(Model, V, P)
 
