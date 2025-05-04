@@ -44,7 +44,7 @@ def obtener_distancias_google(coord_df, api_key):
                 dist = data["rows"][0]["elements"][0]["distance"]["value"] / 1000
                 M[(i, j)] = round(dist, 2)
 
-                print(cou)
+                print("Request #" + str(cou))
 
             except Exception as e:
                 print(f"Error consultando {i}->{j}: {e}")
@@ -257,11 +257,36 @@ def mostrar_mapa_google_maps(coord_df, CD, V, P, vehicle_paths, api_key):
     """
 
     color_list = [
-        "#FF0000", "#0000FF", "#00FF00", "#FFA500", "#800080", "#00CED1", "#FF69B4",
-    "#A52A2A", "#5F9EA0", "#D2691E", "#B22222", "#228B22", "#DAA520", "#4B0082",
-    "#7CFC00", "#FF4500", "#2E8B57", "#8A2BE2", "#48D1CC", "#F08080", "#8B0000",
-    "#FF1493", "#00BFFF", "#9ACD32", "#20B2AA", "#FF6347", "#9932CC", "#B0C4DE",
-    "#D8BFD8", "#DC143C"
+        "#FF0000",
+        "#0000FF",
+        "#00FF00",
+        "#FFA500",
+        "#800080",
+        "#00CED1",
+        "#FF69B4",
+        "#A52A2A",
+        "#5F9EA0",
+        "#D2691E",
+        "#B22222",
+        "#228B22",
+        "#DAA520",
+        "#4B0082",
+        "#7CFC00",
+        "#FF4500",
+        "#2E8B57",
+        "#8A2BE2",
+        "#48D1CC",
+        "#F08080",
+        "#8B0000",
+        "#FF1493",
+        "#00BFFF",
+        "#9ACD32",
+        "#20B2AA",
+        "#FF6347",
+        "#9932CC",
+        "#B0C4DE",
+        "#D8BFD8",
+        "#DC143C",
     ]
 
     cou = 0
